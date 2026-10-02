@@ -4,41 +4,39 @@ load_dotenv()
 import os
 
 from crewai import Agent, LLM
-from tools import yt_tool
 
 llm = LLM(
     model=os.getenv("GEMINI_MODEL_NAME"),
     api_key=os.getenv("GEMINI_API_KEY")
 )
 
-## Create a senior blog content researcher
-
-blog_researcher=Agent(
-    role='Blog Researcher from Youtube Videos',
-    goal='get the relevant video transcription for the topic {topic} from the provided Yt channel',
-    verbose=True,
-    memory=True,
-    backstory=(
-       "Expert in understanding videos in AI Data Science , MAchine Learning And GEN AI and providing suggestion" 
-    ),
-    tools=[yt_tool],
-    llm=llm,
-    allow_delegation=True
-)
-
-## creating a senior blog writer agent with YT tool
-
-blog_writer=Agent(
-    role='Blog Writer',
-    goal='Narrate compelling tech stories about the video {topic} from YT video',
-    verbose=True,
-    memory=True,
-    backstory=(
-        "With a flair for simplifying complex topics, you craft"
-        "engaging narratives that captivate and educate, bringing new"
-        "discoveries to light in an accessible manner."
-    ),
-    tools=[yt_tool],
-    llm=llm,
-    allow_delegation=False
+def create_agents(yt_tool):
+    blog_researcher = Agent(
+        role="Blog Researcher from YouTube Videos",
+        goal="Find and research the YouTube lecture matching {topic} in the provided channel.",
+        verbose=True,
+        memory=True,
+        backstory=(
+            "You research AI, data science, machine learning, and generative AI "
+            "lectures and accurately identify their key ideas."
+        ),
+        tools=[yt_tool],
+        llm=llm,
+        allow_delegation=True,
     )
+
+    blog_writer = Agent(
+        role="Blog Writer",
+        goal="Write a compelling, accurate blog post based on the research for {topic}.",
+        verbose=True,
+        memory=True,
+        backstory=(
+            "With a flair for simplifying complex topics, you craft engaging "
+            "narratives that make discoveries accessible."
+        ),
+        tools=[yt_tool],
+        llm=llm,
+        allow_delegation=False,
+    )
+
+    return blog_researcher, blog_writer

@@ -2,9 +2,13 @@ import streamlit as st
 
 st.set_page_config(page_title="Lecture Blog Generator", page_icon="📝", layout="wide")
 st.title("Lecture Blog Generator")
-st.caption("Search the configured YouTube channel and turn a lecture into a blog post.")
+st.caption("Choose a YouTube channel and lecture to research and turn into a blog post.")
 
 with st.form("lecture_form"):
+    channel = st.text_input(
+        "YouTube channel handle or URL",
+        placeholder="@channelname or https://www.youtube.com/@channelname",
+    )
     lecture_name = st.text_input(
         "Video lecture name",
         placeholder="For example: The Ultimate Guide to API Architectures",
@@ -12,18 +16,20 @@ with st.form("lecture_form"):
     submitted = st.form_submit_button("Research and write", type="primary")
 
 if submitted:
+    normalized_channel = channel.strip()
     normalized_name = lecture_name.strip()
-    if not normalized_name:
-        st.warning("Enter a lecture name to start.")
+    if not normalized_channel or not normalized_name:
+        st.warning("Enter both a YouTube channel and a lecture name.")
     else:
+        st.session_state["channel"] = normalized_channel
         st.session_state["lecture_name"] = normalized_name
         st.session_state.pop("crew_result", None)
         try:
             from crew import run_crew
 
             with st.status("Researching the lecture and writing the blog...", expanded=True) as status:
-                st.write("Searching the configured YouTube channel.")
-                result = run_crew(normalized_name)
+                st.write("Loading videos from the selected YouTube channel.")
+                result = run_crew(normalized_name, normalized_channel)
                 st.session_state["crew_result"] = result
                 status.update(label="Blog generation complete", state="complete", expanded=False)
         except Exception as error:
@@ -33,6 +39,8 @@ result = st.session_state.get("crew_result")
 if result is not None:
     st.divider()
     st.subheader("Input")
+    st.write(f"Channel: {st.session_state.get('channel', '')}")
+    st.write("Lecture:")
     st.write(st.session_state.get("lecture_name", ""))
 
     st.subheader("Task outputs")
