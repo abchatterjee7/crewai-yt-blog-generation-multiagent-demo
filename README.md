@@ -8,43 +8,18 @@ A small CrewAI multi-agent project that researches videos from a configured YouT
 
 The crew runs two agents sequentially:
 
+![](project%20flow%20diagram.png)
+
 1. **Blog researcher** uses the YouTube channel search tool to find information for the requested topic and prepares a short research report.
 2. **Blog writer** uses the research result to draft a readable blog post.
 3. The final blog is written to `new-blog-post.md` in the project directory.
 
-The YouTube search tool is configured with `@abchatterjee7` in `tools.py`. The topic is currently set in `crew.py`.
+The YouTube search tool is configured with the channel URL in `tools.py`. The topic is currently set in `crew.py`.
+YouTube search embeddings use Chroma's local ONNX model, so no OpenAI API key is needed.
 
 ## Requirements
 
 - Python 3.12 (recommended for this project's current dependencies)
-- A Groq API key
-- Access to the configured YouTube channel and its publicly available video information
-
-Groq's free-tier availability, supported models, and rate limits can change. Check the current limits in your Groq account.
-
-## Setup
-
-### 1. Get the project
-
-Clone or download this repository, then open a terminal in the project directory (the directory containing `requirements.txt`).
-
-### 2. Create and activate a virtual environment
-
-**Windows PowerShell:**
-
-```powershell
-py -3.12 -m venv .venv312
-.\.venv312\Scripts\Activate.ps1
-```
-
-If PowerShell blocks activation, see Microsoft's [execution policy documentation](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_execution_policies). You can also use Command Prompt:
-
-```bat
-py -3.12 -m venv .venv312
-.venv312\Scripts\activate
-```
-
-**macOS / Linux:**
 
 ```bash
 python3.12 -m venv .venv312
@@ -66,10 +41,10 @@ Copy `.env.example` to `.env` and set the API key you generated in the [Groq Con
 
 ```dotenv
 GROQ_API_KEY=your_groq_api_key
-GROQ_MODEL_NAME=groq/llama-3.3-70b-versatile
+GROQ_MODEL_NAME=groq/qwen/qwen3.8-27b
 ```
 
-Keep your real key private. `.env` is ignored by Git; do not commit it or paste the key into source code. The model name can be changed in `.env` if Groq changes availability. The code uses `groq/llama-3.3-70b-versatile` when `GROQ_MODEL_NAME` is not set.
+Keep your real key private. `.env` is ignored by Git; do not commit it or paste the key into source code. The model name can be changed in `.env` if Groq changes availability. The code uses `groq/qwen/qwen3.8-27b` when `GROQ_MODEL_NAME` is not set.
 
 ### 5. Run the crew
 

@@ -1,17 +1,25 @@
-from crewai import Agent, LLM
-from tools import yt_tool
-
 from dotenv import load_dotenv
 load_dotenv()
 
 import os
 
+from crewai import Agent, LLM
+from tools import yt_tool
+
+class GroqLLM(LLM):
+    def _format_messages_for_provider(self, messages):
+        messages = [
+            {key: value for key, value in message.items() if key != "cache_breakpoint"}
+            for message in messages
+        ]
+        return super()._format_messages_for_provider(messages)
+
 groq_api_key = os.getenv("GROQ_API_KEY")
 if not groq_api_key:
     raise ValueError("GROQ_API_KEY must be set in the environment or .env file")
 
-llm = LLM(
-    model=os.getenv("GROQ_MODEL_NAME", "groq/llama-3.3-70b-versatile"),
+llm = GroqLLM(
+    model=os.getenv("GROQ_MODEL_NAME", "groq/qwen/qwen3.8-27bs"),
     api_key=groq_api_key,
 )
 

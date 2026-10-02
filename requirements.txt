@@ -1,3 +1,5 @@
 crewai
 crewai_tools
 python-dotenv
+litellm
+langchain-huggingface
