@@ -6,24 +6,13 @@ import os
 from crewai import Agent, LLM
 from tools import yt_tool
 
-class GroqLLM(LLM):
-    def _format_messages_for_provider(self, messages):
-        messages = [
-            {key: value for key, value in message.items() if key != "cache_breakpoint"}
-            for message in messages
-        ]
-        return super()._format_messages_for_provider(messages)
-
-groq_api_key = os.getenv("GROQ_API_KEY")
-if not groq_api_key:
-    raise ValueError("GROQ_API_KEY must be set in the environment or .env file")
-
-llm = GroqLLM(
-    model=os.getenv("GROQ_MODEL_NAME", "groq/qwen/qwen3.8-27bs"),
-    api_key=groq_api_key,
+llm = LLM(
+    model=os.getenv("GEMINI_MODEL_NAME"),
+    api_key=os.getenv("GEMINI_API_KEY")
 )
 
 ## Create a senior blog content researcher
+
 blog_researcher=Agent(
     role='Blog Researcher from Youtube Videos',
     goal='get the relevant video transcription for the topic {topic} from the provided Yt channel',
@@ -38,6 +27,7 @@ blog_researcher=Agent(
 )
 
 ## creating a senior blog writer agent with YT tool
+
 blog_writer=Agent(
     role='Blog Writer',
     goal='Narrate compelling tech stories about the video {topic} from YT video',
@@ -51,4 +41,4 @@ blog_writer=Agent(
     tools=[yt_tool],
     llm=llm,
     allow_delegation=False
-)
+    )
