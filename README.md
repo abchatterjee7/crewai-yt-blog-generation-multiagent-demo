@@ -73,14 +73,6 @@ The current search is channel-based. A display name by itself is not enough to i
 | `requirements.txt` | Python dependencies installed into `venv`. |
 | `.env.example` | Template for Google Gemini configuration; copy to `.env`. |
 
-## Troubleshooting
-
-- **`GEMINI_API_KEY must be set`:** confirm `.env` exists in the project directory and contains a valid `GEMINI_API_KEY` entry. Restart the app after editing it.
-- **Authentication or model error:** verify the key in Google AI Studio and confirm `GEMINI_MODEL_NAME` is available to your account.
-- **Rate limit or quota error:** check your Google AI account's current usage limits.
-- **No relevant video found:** check the channel handle or URL entered in the app, the lecture name, and that the channel has matching videos accessible to the search tool.
-- **`regex` or `tiktoken` build errors:** use Python 3.12 and create the `venv` environment with `py -3.12 -m venv venv`. Changing the Python version does not change an environment that was already created.
-- **Import errors:** activate `venv` and install dependencies with `python -m pip install -r requirements.txt` from the project directory.
 
 ## Security
 
