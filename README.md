@@ -2,7 +2,7 @@
 
 A small CrewAI multi-agent project that researches videos from a YouTube channel and turns a selected lecture name into a Markdown blog post. Enter the channel handle or URL and lecture name in Streamlit. The app displays the submitted input, research result, and final blog. The agents use Groq for text generation.
 
-> **Current behavior:** this project searches a YouTube channel by lecture name; it does not upload or read a local video file. Enter a channel `@handle`, channel ID, or supported YouTube channel URL, not just its display name.
+> **Current behavior:** search a YouTube channel by lecture name, or provide a YouTube video URL to retrieve that video's transcript directly. Enter a channel `@handle`, channel ID, or supported YouTube channel URL, not just its display name.
 
 ## How It Works
 
@@ -36,10 +36,10 @@ Create `.env` from `.env.example` only if `.env` does not already exist, then se
 
 ```dotenv
 GROQ_API_KEY=your_groq_api_key
-GROQ_MODEL_NAME=groq/qwen/qwen3.8-27b
+GROQ_MODEL_NAME=openai/gpt-oss-120b
 ```
 
-Keep your real key private. `.env` is ignored by Git; do not commit it or paste the key into source code. Set `GROQ_MODEL_NAME` to a LiteLLM Groq model identifier available to your account, prefixed with `groq/`.
+Keep your real key private. `.env` is ignored by Git; do not commit it or paste the key into source code. Set `GROQ_MODEL_NAME` to a model ID available to your Groq account. The app adds the `groq/` LiteLLM provider prefix automatically.
 
 Launch Streamlit from the project folder:
 
@@ -47,22 +47,23 @@ Launch Streamlit from the project folder:
 python -m streamlit run app.py
 ```
 
-Open the Local URL printed by Streamlit (usually `http://localhost:8501`). Enter a YouTube channel handle or URL and a lecture name. The app searches that channel and displays the input, each task's output, and the final blog.
+Open the Local URL printed by Streamlit (usually `http://localhost:8501`). Enter a YouTube channel handle or URL and a lecture name. When you have a specific video URL, provide it to search that video's transcript directly. The app displays each task's output and the final blog.
 
-![](images/Screenshot1.png)
+- How the UI page look when opens up
+![](images/sc1.png)
 
 - When you feed the blanks and the app is processing...
-![](images/Screenshot2.png)
+![](images/sc2.png)
 
-- When app gives you output with blog content generation
-![](images/Screenshot3.png)
+- When app generates blog content from youtube video
+![](images/sc3.png)
 
 ## Customize the Run
 
 - **YouTube channel:** enter a channel `@handle`, channel ID, or supported channel URL in the Streamlit form.
-- **Model:** set `GROQ_MODEL_NAME` in `.env` to a Groq model identifier available to your account, prefixed with `groq/`.
+- **Model:** set `GROQ_MODEL_NAME` in `.env` to a model ID available to your Groq account, such as `openai/gpt-oss-120b`.
 
-The current search is channel-based. A display name by itself is not enough to identify a channel reliably. Supporting an uploaded/local video or selecting an arbitrary video URL requires changing the YouTube tool and the task input flow.
+The channel handle identifies the channel, while an optional video URL lets the app retrieve the exact lecture transcript directly. A display name by itself is not enough to identify a channel reliably.
 
 ## Project Structure
 
@@ -78,5 +79,4 @@ The current search is channel-based. A display name by itself is not enough to i
 
 
 ## Security
-
 Never commit `.env` or expose your Groq API key in logs, screenshots, source code, or public issue reports. If a key is exposed, revoke it and create a replacement.

@@ -4,12 +4,14 @@ from crewai import Task
 def create_tasks(yt_tool, blog_researcher, blog_writer):
     research_task = Task(
         description=(
-            "Find the YouTube lecture titled or covering '{topic}' in the configured "
-            "channel. Research its key points and supporting details."
+            "Use the video transcript search tool to research the YouTube lecture "
+            "matching '{topic}'. Base the report only on retrieved transcript content. "
+            "If the transcript cannot be retrieved, report a retrieval failure; do not "
+            "claim the video does not exist or use unrelated videos as evidence."
         ),
         expected_output=(
-            "A concise, accurate research report about the lecture, including its "
-            "main ideas and useful supporting details."
+            "A concise report of the lecture's main ideas, grounded in its transcript, "
+            "or a clear statement that transcript retrieval failed."
         ),
         tools=[yt_tool],
         agent=blog_researcher,
@@ -17,14 +19,13 @@ def create_tasks(yt_tool, blog_researcher, blog_writer):
 
     write_task = Task(
         description=(
-            "Using the research report, write a well-structured blog post about "
-            "the YouTube lecture '{topic}'. Do not invent details that are absent "
-            "from the research."
+            "Write a well-structured Markdown blog post based only on the research "
+            "report for '{topic}'. If the report says retrieval failed, return that "
+            "briefly instead of inventing a blog post."
         ),
-        expected_output="A polished Markdown blog post based on the lecture research.",
-        tools=[yt_tool],
+        expected_output="An accurate Markdown blog post based on the verified lecture research.",
+        context=[research_task],
         agent=blog_writer,
         async_execution=False,
     )
-
     return research_task, write_task

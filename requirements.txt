@@ -1,6 +1,6 @@
-crewai[google-genai]
+crewai
 crewai_tools
-python-dotenv
 litellm
+python-dotenv
 langchain-huggingface
 streamlit

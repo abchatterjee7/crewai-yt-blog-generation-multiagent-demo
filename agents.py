@@ -21,6 +21,9 @@ if not groq_api_key:
 if not groq_model_name:
     raise ValueError("GROQ_MODEL_NAME must be set in the environment or .env file")
 
+if not groq_model_name.startswith("groq/"):
+    groq_model_name = f"groq/{groq_model_name}"
+
 llm = GroqLLM(
     model=groq_model_name,
     api_key=groq_api_key,
