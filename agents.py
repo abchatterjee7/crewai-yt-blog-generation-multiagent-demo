@@ -5,9 +5,25 @@ import os
 
 from crewai import Agent, LLM
 
-llm = LLM(
-    model=os.getenv("GEMINI_MODEL_NAME"),
-    api_key=os.getenv("GEMINI_API_KEY")
+class GroqLLM(LLM):
+    def _format_messages_for_provider(self, messages):
+        messages = [
+            {key: value for key, value in message.items() if key != "cache_breakpoint"}
+            for message in messages
+        ]
+        return super()._format_messages_for_provider(messages)
+
+groq_api_key = os.getenv("GROQ_API_KEY")
+groq_model_name = os.getenv("GROQ_MODEL_NAME")
+
+if not groq_api_key:
+    raise ValueError("GROQ_API_KEY must be set in the environment or .env file")
+if not groq_model_name:
+    raise ValueError("GROQ_MODEL_NAME must be set in the environment or .env file")
+
+llm = GroqLLM(
+    model=groq_model_name,
+    api_key=groq_api_key,
 )
 
 def create_agents(yt_tool):

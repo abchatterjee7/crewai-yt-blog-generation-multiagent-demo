@@ -1,6 +1,6 @@
 # YouTube Blog Generator with CrewAI
 
-A small CrewAI multi-agent project that researches videos from a YouTube channel and turns a selected lecture name into a Markdown blog post. Enter the channel handle or URL and lecture name in Streamlit. The app displays the submitted input, research result, and final blog. The agents use Google Gemini for text generation.
+A small CrewAI multi-agent project that researches videos from a YouTube channel and turns a selected lecture name into a Markdown blog post. Enter the channel handle or URL and lecture name in Streamlit. The app displays the submitted input, research result, and final blog. The agents use Groq for text generation.
 
 > **Current behavior:** this project searches a YouTube channel by lecture name; it does not upload or read a local video file. Enter a channel `@handle`, channel ID, or supported YouTube channel URL, not just its display name.
 
@@ -14,7 +14,7 @@ The crew runs two agents sequentially:
 2. **Blog writer** uses the research result to draft a readable blog post.
 3. Streamlit displays the research and final blog, with an option to download the blog as Markdown.
 
-YouTube search embeddings use Chroma's local ONNX model. Each selected channel gets a separate vector collection; `GEMINI_API_KEY` is used for Gemini text generation.
+YouTube search embeddings use Chroma's local ONNX model. Each selected channel gets a separate vector collection; `GROQ_API_KEY` and `GROQ_MODEL_NAME` configure text generation.
 
 ## Run on Windows
 
@@ -32,14 +32,14 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-Create `.env` from `.env.example` only if `.env` does not already exist, then ensure it contains your Gemini API key and model:
+Create `.env` from `.env.example` only if `.env` does not already exist, then set your Groq API key and model:
 
 ```dotenv
-GEMINI_API_KEY=your_gemini_api_key
-GEMINI_MODEL_NAME=gemini/gemini-3.8-flash
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL_NAME=groq/qwen/qwen3.8-27b
 ```
 
-Keep your real key private. `.env` is ignored by Git; do not commit it or paste the key into source code. Set `GEMINI_MODEL_NAME` to a Gemini model available to your account.
+Keep your real key private. `.env` is ignored by Git; do not commit it or paste the key into source code. Set `GROQ_MODEL_NAME` to a LiteLLM Groq model identifier available to your account, prefixed with `groq/`.
 
 Launch Streamlit from the project folder:
 
@@ -54,10 +54,13 @@ Open the Local URL printed by Streamlit (usually `http://localhost:8501`). Enter
 - When you feed the blanks and the app is processing...
 ![](images/Screenshot2.png)
 
+- When app gives you output with blog content generation
+![](images/Screenshot3.png)
+
 ## Customize the Run
 
 - **YouTube channel:** enter a channel `@handle`, channel ID, or supported channel URL in the Streamlit form.
-- **Model:** set `GEMINI_MODEL_NAME` in `.env` to a Gemini model available to your account.
+- **Model:** set `GROQ_MODEL_NAME` in `.env` to a Groq model identifier available to your account, prefixed with `groq/`.
 
 The current search is channel-based. A display name by itself is not enough to identify a channel reliably. Supporting an uploaded/local video or selecting an arbitrary video URL requires changing the YouTube tool and the task input flow.
 
@@ -65,15 +68,15 @@ The current search is channel-based. A display name by itself is not enough to i
 
 | File | Purpose |
 | --- | --- |
-| `agents.py` | Defines the researcher and writer agents and their Gemini LLM. |
+| `agents.py` | Defines the researcher and writer agents and their Groq LLM. |
 | `tasks.py` | Builds the research and writing tasks for each run. |
 | `tools.py` | Configures channel search and local ONNX embeddings. |
 | `crew.py` | Creates and runs the sequential crew for a topic. |
 | `app.py` | Streamlit UI for lecture input, task output, and blog display. |
 | `requirements.txt` | Python dependencies installed into `venv`. |
-| `.env.example` | Template for Google Gemini configuration; copy to `.env`. |
+| `.env.example` | Template for Groq configuration; copy to `.env`. |
 
 
 ## Security
 
-Never commit `.env` or expose your Gemini API key in logs, screenshots, source code, or public issue reports. If a key is exposed, revoke it and create a replacement.
+Never commit `.env` or expose your Groq API key in logs, screenshots, source code, or public issue reports. If a key is exposed, revoke it and create a replacement.
